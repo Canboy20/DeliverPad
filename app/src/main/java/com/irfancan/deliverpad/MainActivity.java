@@ -39,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
         myDeliveries.add("HONG KONG");
         myDeliveries.add("HELSINKI");
         myDeliveries.add("REYKJAVIK");
+        myDeliveries.add("PARIS");
+
 
 
         //Adapter
