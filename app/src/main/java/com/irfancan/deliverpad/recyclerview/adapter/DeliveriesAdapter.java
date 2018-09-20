@@ -101,7 +101,7 @@ public class DeliveriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 break;
 
             case LOADING:
-//                Do nothing
+                //Update his part later
                 break;
         }
 
