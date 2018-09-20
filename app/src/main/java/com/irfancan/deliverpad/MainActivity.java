@@ -49,7 +49,9 @@ public class MainActivity extends AppCompatActivity {
     private static final int PAGE_START = 0;
     private boolean isLoading = false;
     private boolean isLastPage = false;
-    private int TOTAL_PAGES = 5;
+
+    //When user reaches the end of the list, we will request API for the next delivered items. If we receive at least 1 deliverd item, this count will be increased
+    private int TOTAL_PAGES = 1;
     private int currentPage = PAGE_START;
 
 
@@ -207,8 +209,31 @@ public class MainActivity extends AppCompatActivity {
 
                         mDeliveriesAdapter.addAll(rootResponse);
 
-                        if (currentPage != TOTAL_PAGES) mDeliveriesAdapter.addLoadingFooter();
-                        else isLastPage = true;
+
+                        //Important!
+                        // CASE 1: If the amount of items we have just received from the API is less than LIMIT (20 in htis caase), it means that we have fetched all the available delivered items from the API(We asked for 20 more new items but received less than 20)
+                        //In this case we dont want to send a new request to the API again since we have fetched all available items. We do this by not incrementing TOTAL_PAGES anymore
+                        //
+                        // CASE 2: However, if the amount of new deliverd items we have just received from the API is LIMIT(20 in this case) amount, it means there is a chance that there can be more items that are yet to be fetched.
+                        // Therefore in this case we increment page count by 1 so that the API call will be made again when the user scrolls to the bottom of the list
+                        //
+                        if(rootResponse.size() == LIMIT){
+
+                            TOTAL_PAGES++;
+
+                        }
+
+                        if (currentPage != TOTAL_PAGES){
+
+                            mDeliveriesAdapter.addLoadingFooter();
+
+                        }
+                        else{
+
+                            isLastPage = true;
+
+                        }
+
 
                         Log.d("REQUEST SUCCESS","SUCCESS");
                         //mDeliveriesAdapter = new DeliveriesAdapter(rootResponse);

@@ -66,7 +66,8 @@ public class DeliveriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             case ITEM:
 
                 DeliveryViewHolder deliveredItemHolder = (DeliveryViewHolder) holder;
-                deliveredItemHolder.getDescriptionTextView().setText(mDeliveredItems.get(position).getDescription());
+                deliveredItemHolder.updateDescriptionTextView(mDeliveredItems.get(position).getDescription());
+                deliveredItemHolder.updateImageView(mDeliveredItems.get(position).getImageUrl());
                 break;
 
             case LOADING:
