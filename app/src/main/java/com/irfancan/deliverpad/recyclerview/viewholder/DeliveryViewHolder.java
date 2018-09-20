@@ -13,19 +13,26 @@ public class DeliveryViewHolder extends RecyclerView.ViewHolder {
 
     public LinearLayout mLinearLayout;
     private TextView mDescriptionTextView;
+    private TextView mLocationTextView;
     private ImageView mImageOfItemImageView;
 
     public DeliveryViewHolder(LinearLayout v) {
         super(v);
         mLinearLayout = v;
         mDescriptionTextView = v.findViewById(R.id.descriptionTextView);
+        mLocationTextView=v.findViewById(R.id.locationNameTextView);
         mImageOfItemImageView=v.findViewById(R.id.itemImageView);
+
     }
 
 
 
     public void updateDescriptionTextView(String description){
         mDescriptionTextView.setText(description);
+    }
+
+    public void updateLocationNameTextView(String locationName){
+        mLocationTextView.setText(locationName);
     }
 
     public void updateImageView(String urlOfImage){

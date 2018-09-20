@@ -1,6 +1,8 @@
 package com.irfancan.deliverpad.recyclerview.adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,6 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import com.irfancan.deliverpad.Constants.Constants;
+import com.irfancan.deliverpad.DeliveredItemDetailsActivity;
 import com.irfancan.deliverpad.R;
 import com.irfancan.deliverpad.model.DeliveredItem;
 import com.irfancan.deliverpad.recyclerview.viewholder.DeliveryViewHolder;
@@ -59,7 +63,7 @@ public class DeliveriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
 
 
         switch (getItemViewType(position)) {
@@ -67,7 +71,33 @@ public class DeliveriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
                 DeliveryViewHolder deliveredItemHolder = (DeliveryViewHolder) holder;
                 deliveredItemHolder.updateDescriptionTextView(mDeliveredItems.get(position).getDescription());
+                deliveredItemHolder.updateLocationNameTextView(mDeliveredItems.get(position).getLocation() != null ? mDeliveredItems.get(position).getLocation().getAddress() : "");
                 deliveredItemHolder.updateImageView(mDeliveredItems.get(position).getImageUrl());
+                deliveredItemHolder.mLinearLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        Intent deliveredItemIntent=new Intent(context, DeliveredItemDetailsActivity.class);
+                        Bundle deliveredItemBundle = new Bundle();
+
+                        deliveredItemBundle.putString(Constants.ITEM_NAME, mDeliveredItems.get(position).getDescription());
+                        deliveredItemBundle.putString(Constants.ITEM_IMG_URL, mDeliveredItems.get(position).getImageUrl());
+
+                        if(mDeliveredItems.get(position).getLocation() != null){
+
+                            deliveredItemBundle.putString(Constants.ITEM_ADDRESS, mDeliveredItems.get(position).getLocation().getAddress());
+                            deliveredItemBundle.putDouble(Constants.ITEM_LONG, mDeliveredItems.get(position).getLocation().getLng());
+                            deliveredItemBundle.putDouble(Constants.ITEM_LATI, mDeliveredItems.get(position).getLocation().getLat());
+
+                        }
+
+
+                        deliveredItemIntent.putExtras(deliveredItemBundle);
+                        context.startActivity(deliveredItemIntent);
+
+                    }
+                });
+
                 break;
 
             case LOADING:
