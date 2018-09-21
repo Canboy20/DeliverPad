@@ -6,6 +6,9 @@ import android.net.NetworkInfo;
 
 public class InternetStateChecker {
 
+    //This class is responsible in checking whether the device has an active internet connection
+    //If it has, delivered items will be retrieved from API
+    //If not, the items will be restored from the cache(Hope there was a time the user was able to retrieve the data from the API otherwise the cache will be empty! :/ )
     public static boolean isNetwork(Context context) {
 
         ConnectivityManager connectivityManager
