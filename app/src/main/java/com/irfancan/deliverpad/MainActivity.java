@@ -1,5 +1,8 @@
 package com.irfancan.deliverpad;
 
+import android.app.Activity;
+import android.arch.persistence.room.Room;
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -8,16 +11,23 @@ import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
+import com.irfancan.deliverpad.InternetState.InternetStateChecker;
+import com.irfancan.deliverpad.Room.AppDatabase;
+import com.irfancan.deliverpad.Room.Item;
 import com.irfancan.deliverpad.model.DeliveredItem;
+import com.irfancan.deliverpad.model.LocationInfo;
 import com.irfancan.deliverpad.network.service.DeliveredItemsFetcherService;
 import com.irfancan.deliverpad.network.service.RetrofitService;
 import com.irfancan.deliverpad.recyclerview.adapter.DeliveriesAdapter;
 import com.irfancan.deliverpad.recyclerview.listeners.PagingScrollListener;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
+import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
@@ -31,12 +41,16 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager mDeliveriesLayoutManager;
     private LinearLayoutManager mDeliveriesLayoutManager_NON_RECYCLER;
 
+    //Room Database instance
+    AppDatabase db;
+
 
     //ProgressBar ref
     private LinearLayout mProgressBarLayout;
 
     //Just for testing purpose
     List<DeliveredItem> myDeliveries=new ArrayList<>();
+    List<DeliveredItem> myCachedDeliveries=new LinkedList<>();
 
 
     private int OFFSET=0;
@@ -61,6 +75,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        db = Room.databaseBuilder(getApplicationContext(),
+                AppDatabase.class, "database-name").build();
 
         //Progressbar Ref
         mProgressBarLayout=findViewById(R.id.progressbar_linear_layout);
@@ -116,7 +133,25 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        getDeliveredItemsFromAPI();
+
+
+
+
+
+        //Check if Internet connection is available
+        //We will only try to retrieve delivered items from API only if Internet connection is available
+        //If it isnt, we try to display cached data instead
+        if (InternetStateChecker.isNetwork(this)) {
+
+            getDeliveredItemsFromAPI();
+
+        }else{
+
+            displayLoadingFromCacheToast();
+            getDeliveredItemsFromCache();
+
+        }
+
 
     }
 
@@ -146,6 +181,21 @@ public class MainActivity extends AppCompatActivity {
                         mProgressBarLayout.setVisibility(View.GONE);
                         mDeliveriesAdapter. addAll(rootResponse);
 
+
+                        //Store retrieved valies to local DB
+                        List<Item> dbVersionOfDeliverItems = convertToLocalObject(rootResponse);
+                        Completable.fromAction(() -> db.itemDao().insertAllItems(dbVersionOfDeliverItems))
+                                .subscribeOn(Schedulers.io())
+                                .subscribe(
+                                        () -> {
+                                            Log.v("TEST","STAT: Success :)");
+                                            //listener.onSuccess();
+
+                                        },
+                                        throwable -> Log.e("ERROR", "DB - Could not add items!"));
+
+
+
                         if (currentPage <= TOTAL_PAGES){
 
                             mDeliveriesAdapter.addLoadingFooter();
@@ -168,6 +218,9 @@ public class MainActivity extends AppCompatActivity {
                     public void onError(Throwable e) {
 
                         mProgressBarLayout.setVisibility(View.GONE);
+
+
+
 
                         // Network error
                         Log.d("REQUEST FAILED","FAILED");
@@ -257,6 +310,109 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+
+
+    private List<Item> convertToLocalObject(List<DeliveredItem> deliveredItemsRef){
+
+
+        //I choose linkedlist to preserve insertion order
+        List<Item> localObjects=new LinkedList<>();
+
+        for(int i=0;i<deliveredItemsRef.size();i++){
+
+            Item myItem=new Item();
+            myItem.setUid(i);
+            myItem.setId(deliveredItemsRef.get(i).getId());
+            myItem.setDescription(deliveredItemsRef.get(i).getDescription());
+            myItem.setImageUrl(deliveredItemsRef.get(i).getImageUrl());
+
+            //Just making sure that location is not null
+            if( deliveredItemsRef.get(i).getLocation() != null  ){
+
+                myItem.setLat(deliveredItemsRef.get(i).getLocation().getLat());
+                myItem.setLng(deliveredItemsRef.get(i).getLocation().getLng());
+                myItem.setAddress(deliveredItemsRef.get(i).getLocation().getAddress());
+
+
+            }
+
+            localObjects.add(myItem);
+
+        }
+
+        return localObjects;
+
+    }
+
+
+
+    private List<DeliveredItem> convertDbItemToDeliveredItems(List<Item> itemsRef){
+
+        //I choose linkedlist to preserve insertion order
+        List<DeliveredItem> deliveredItemsObject=new LinkedList<>();
+
+        for(int i=0;i<itemsRef.size();i++){
+
+            DeliveredItem myDeliveredItem=new DeliveredItem();
+            myDeliveredItem.setId(itemsRef.get(i).getId());
+            myDeliveredItem.setDescription(itemsRef.get(i).getDescription());
+            myDeliveredItem.setImageUrl(itemsRef.get(i).getImageUrl());
+
+
+            LocationInfo myDeliveredItemLocationInfo=new LocationInfo();
+
+            myDeliveredItemLocationInfo.setLat(itemsRef.get(i).getLat());
+            myDeliveredItemLocationInfo.setLng(itemsRef.get(i).getLng());
+            myDeliveredItemLocationInfo.setAddress(itemsRef.get(i).getAddress());
+            myDeliveredItem.setLocation(myDeliveredItemLocationInfo);
+
+            deliveredItemsObject.add(myDeliveredItem);
+
+        }
+
+
+        return deliveredItemsObject;
+
+    }
+
+
+
+
+
+
+    private void displayLoadingFromCacheToast(){
+
+        Context context = getApplicationContext();
+        CharSequence text = "No internet connection available. Loading data from cache!";
+        int duration = Toast.LENGTH_LONG;
+
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
+
+    }
+
+
+
+    private void getDeliveredItemsFromCache(){
+
+        db.itemDao().getAll()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        deliveredItemsFromDB -> {
+
+                            myCachedDeliveries = convertDbItemToDeliveredItems(deliveredItemsFromDB);
+
+                            mProgressBarLayout.setVisibility(View.GONE);
+                            mDeliveriesAdapter. addAll(myCachedDeliveries);
+
+                            //}
+                        },
+                        throwable -> Log.e("ERROR","ERROR WHILE GETTING DATA FROM DB"));
+
+
+    }
 
 
 

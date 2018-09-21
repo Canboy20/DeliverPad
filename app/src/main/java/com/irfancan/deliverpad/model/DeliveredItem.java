@@ -34,4 +34,20 @@ public class DeliveredItem {
     public LocationInfo getLocation() {
         return location;
     }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public void setLocation(LocationInfo location) {
+        this.location = location;
+    }
 }
