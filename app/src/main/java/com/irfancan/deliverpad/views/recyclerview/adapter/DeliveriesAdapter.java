@@ -51,8 +51,8 @@ public class DeliveriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 break;
 
             case LOADING:
-                View v2 = inflater.inflate(R.layout.loading_item, parent, false);
-                viewHolder = new LoadingViewHolder(v2);
+                LinearLayout loadingItemRow= (LinearLayout) LayoutInflater.from(parent.getContext()).inflate(R.layout.loading_item, parent, false);
+                viewHolder = new LoadingViewHolder(loadingItemRow);
                 break;
         }
         return viewHolder;
@@ -121,17 +121,6 @@ public class DeliveriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         return mDeliveredItems;
     }
 
-    public void setMovies(List<DeliveredItem> deliveredItems) {
-        this.mDeliveredItems = deliveredItems;
-    }
-
-
-
-
-
-
-
-
 
 
     public void add(DeliveredItem mc) {
@@ -191,37 +180,21 @@ public class DeliveriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
 
 
-
-
-
-    /*private List<DeliveredItem> mDeliveredItems;
-
-
-    public DeliveriesAdapter(List<DeliveredItem> myDataset) {
-        mDeliveredItems = myDataset;
-    }
-
     @Override
-    public DeliveryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public int getItemViewType(int position) {
 
-        LinearLayout deliveredItemRow= (LinearLayout) LayoutInflater.from(parent.getContext()).inflate(R.layout.delivered_item, parent, false);
-        DeliveryViewHolder vh = new DeliveryViewHolder(deliveredItemRow);
-        return vh;
-    }
+        if(position == getmDeliveredItems().size() - 1 && isLoadingAdded){
 
-    @Override
-    public void onBindViewHolder(DeliveryViewHolder holder, int position) {
+            return LOADING;
 
-        holder.getDescriptionTextView().setText(mDeliveredItems.get(position).getDescription());
+        }else{
+
+            return ITEM;
+
+        }
 
     }
 
-    // Return the size of your dataset (invoked by the layout manager)
-    @Override
-    public int getItemCount() {
 
-        //Just being extra careful by checking null condition
-        return mDeliveredItems == null ? 0 : mDeliveredItems.size();
 
-    }*/
 }

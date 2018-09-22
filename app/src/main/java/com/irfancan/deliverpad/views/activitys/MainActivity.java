@@ -20,6 +20,7 @@ import com.irfancan.deliverpad.presenters.CacheDataPresenter;
 import com.irfancan.deliverpad.views.ViewUpdater;
 import com.irfancan.deliverpad.views.recyclerview.adapter.DeliveriesAdapter;
 import com.irfancan.deliverpad.views.recyclerview.listeners.PagingScrollListener;
+import com.irfancan.deliverpad.views.recyclerview.viewholder.LoadingViewHolder;
 
 import java.util.List;
 
@@ -42,7 +43,6 @@ public class MainActivity extends AppCompatActivity implements ViewUpdater {
     private TextView tryAgainTextView;
 
 
-    private int OFFSET=0;
     private int LIMIT = 20;
 
 
@@ -113,13 +113,10 @@ public class MainActivity extends AppCompatActivity implements ViewUpdater {
             @Override
             protected void loadNextDeliveredItems() {
 
-                mProgressBarLayout.setVisibility(View.VISIBLE);
-
+                //If user reaches end of list, then lets retrieve next items by making a request to API
                 isLoading = true;
                 currentPage += 1;
-
                 mApiDataPresenter.getNextDeliveredItemsFromAPI();
-
 
             }
 
@@ -238,7 +235,6 @@ public class MainActivity extends AppCompatActivity implements ViewUpdater {
 
         mProgressBarLayout.setVisibility(View.GONE);
         mDeliveriesAdapter. addAll(receivedDeliveredItems);
-
         LIMIT = receivedDeliveredItems.size();
         isLastPage = true;
 
@@ -256,6 +252,35 @@ public class MainActivity extends AppCompatActivity implements ViewUpdater {
 
 
 
+    @Override
+    public void displayErrorLoadingDataOnViewHolder() {
+
+        RecyclerView.ViewHolder lastVisibleViewHolder = mDeliveriesRecyclerView.findViewHolderForAdapterPosition(mDeliveriesLayoutManager_NON_RECYCLER.getItemCount()-1);
+
+        //Just being extra careful that the last viewholder is a Loading ViewHolder
+        if(lastVisibleViewHolder instanceof LoadingViewHolder){
+
+            ((LoadingViewHolder) lastVisibleViewHolder).displayTryAgain();
+
+        }
+
+    }
+
+
+
+    @Override
+    public void displayCacheIsEmpty() {
+
+        Context context = getApplicationContext();
+        CharSequence text = "Cache is Empty. Sorry :( ";
+        int duration = Toast.LENGTH_LONG;
+
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
+
+
+    }
+
 
     private void displayLoadingFromCacheToast(){
 
@@ -267,8 +292,6 @@ public class MainActivity extends AppCompatActivity implements ViewUpdater {
         toast.show();
 
     }
-
-
 
 
 }

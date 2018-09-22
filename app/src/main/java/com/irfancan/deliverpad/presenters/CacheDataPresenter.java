@@ -49,12 +49,10 @@ public class CacheDataPresenter {
                         deliveredItemsFromDB -> {
 
                             List<DeliveredItem> myCachedDeliveries = convertDbItemToDeliveredItems(deliveredItemsFromDB);
-
                             mViewUpdater.dispayDeliveredItemsFromCache(myCachedDeliveries);
 
-
-                            //}
                         },
+
                         throwable -> Log.e("ERROR","ERROR WHILE GETTING DATA FROM DB")));
 
 

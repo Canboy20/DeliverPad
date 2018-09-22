@@ -116,7 +116,7 @@ public class ApiDataPresenter {
                         // Network error
                         Log.d("REQUEST FAILED","FAILED");
 
-                        mViewUpdater.displayErrorLoadingData();
+                        mViewUpdater.displayErrorLoadingDataOnViewHolder();
 
 
                     }

@@ -13,4 +13,9 @@ public interface ViewUpdater {
     void dispayDeliveredItemsFromCache(List<DeliveredItem> receivedDeliveredItems);
 
     void displayErrorLoadingData();
+
+    void displayErrorLoadingDataOnViewHolder();
+
+    void displayCacheIsEmpty();
+
 }
