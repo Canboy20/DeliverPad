@@ -3,6 +3,9 @@
     <string name="description_placer">Description Goes Here</string>
     <string name="location_name_placer">Location Goes Here</string>
     <string name="title_activity_delivered_item_details">Map</string>
+    <string name="error_occurred_message">Something went wrong :( </string>
+    <string name="try_again">Press to try again </string>
+
 
 
 </resources>

@@ -1,4 +1,4 @@
-package com.irfancan.deliverpad;
+package com.irfancan.deliverpad.views.activitys;
 
 import android.arch.persistence.room.Room;
 import android.content.Context;
@@ -6,33 +6,22 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.irfancan.deliverpad.internetState.InternetStateChecker;
+import com.irfancan.deliverpad.R;
+import com.irfancan.deliverpad.network.internetState.InternetStateChecker;
 import com.irfancan.deliverpad.models.database.AppDatabase;
-import com.irfancan.deliverpad.models.database.Item;
 import com.irfancan.deliverpad.models.model.DeliveredItem;
-import com.irfancan.deliverpad.models.model.LocationInfo;
-import com.irfancan.deliverpad.network.DeliveredItemsFetcherService;
-import com.irfancan.deliverpad.network.RetrofitService;
 import com.irfancan.deliverpad.presenters.ApiDataPresenter;
 import com.irfancan.deliverpad.presenters.CacheDataPresenter;
 import com.irfancan.deliverpad.views.ViewUpdater;
 import com.irfancan.deliverpad.views.recyclerview.adapter.DeliveriesAdapter;
 import com.irfancan.deliverpad.views.recyclerview.listeners.PagingScrollListener;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-
-import io.reactivex.Completable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.observers.DisposableSingleObserver;
-import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity implements ViewUpdater {
 
@@ -46,19 +35,16 @@ public class MainActivity extends AppCompatActivity implements ViewUpdater {
     AppDatabase roomDatabase;
 
 
-    //ProgressBar ref
+    //ProgressBar & Try Again layout ref
     private LinearLayout mProgressBarLayout;
+    private LinearLayout mTryAgainLayout;
 
-    //Just for testing purpose
-    List<DeliveredItem> myDeliveries=new ArrayList<>();
-    List<DeliveredItem> myCachedDeliveries=new LinkedList<>();
+    private TextView tryAgainTextView;
 
 
     private int OFFSET=0;
     private int LIMIT = 20;
 
-
-    private CompositeDisposable mRequestsDisposables = new CompositeDisposable();
 
 
     private static final int PAGE_START = 0;
@@ -86,8 +72,9 @@ public class MainActivity extends AppCompatActivity implements ViewUpdater {
         roomDatabase = Room.databaseBuilder(getApplicationContext(),
                 AppDatabase.class, "database-name").build();
 
-        //Progressbar Ref
+        //Layout Ref
         mProgressBarLayout=findViewById(R.id.progressbar_linear_layout);
+        mTryAgainLayout=findViewById(R.id.try_again_layout);
 
         //RecyclerView Ref
         mDeliveriesRecyclerView = findViewById(R.id.deliveries_recycler_view);
@@ -98,6 +85,18 @@ public class MainActivity extends AppCompatActivity implements ViewUpdater {
         mDeliveriesLayoutManager_NON_RECYCLER = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mDeliveriesRecyclerView.setLayoutManager(mDeliveriesLayoutManager_NON_RECYCLER);
 
+        //Try again text Ref. This will only be visible if at the very first attempt of retrieving data from API fails
+        tryAgainTextView = findViewById(R.id.try_again_textView);
+        tryAgainTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                mTryAgainLayout.setVisibility(View.GONE);
+                mProgressBarLayout.setVisibility(View.VISIBLE);
+                mApiDataPresenter.getDeliveredItemsFromAPI();
+
+            }
+        });
 
         //Presenters
         mApiDataPresenter = new ApiDataPresenter(this);
@@ -236,15 +235,11 @@ public class MainActivity extends AppCompatActivity implements ViewUpdater {
     @Override
     public void dispayDeliveredItemsFromCache(List<DeliveredItem> receivedDeliveredItems) {
 
+
         mProgressBarLayout.setVisibility(View.GONE);
+        mDeliveriesAdapter. addAll(receivedDeliveredItems);
 
-
-        mDeliveriesAdapter.removeLoadingFooter();
-        isLoading = false;
-
-        mDeliveriesAdapter.addAll(receivedDeliveredItems);
-
-        currentPage = TOTAL_PAGES;
+        LIMIT = receivedDeliveredItems.size();
         isLastPage = true;
 
 
@@ -254,9 +249,8 @@ public class MainActivity extends AppCompatActivity implements ViewUpdater {
     @Override
     public void displayErrorLoadingData() {
 
-
-        //Place Error here
-
+        mProgressBarLayout.setVisibility(View.GONE);
+        mTryAgainLayout.setVisibility(View.VISIBLE);
 
     }
 

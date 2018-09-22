@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.irfancan.deliverpad.constants.Constants;
-import com.irfancan.deliverpad.DeliveredItemDetailsActivity;
+import com.irfancan.deliverpad.views.activitys.DeliveredItemDetailsActivity;
 import com.irfancan.deliverpad.R;
 import com.irfancan.deliverpad.models.model.DeliveredItem;
 import com.irfancan.deliverpad.views.recyclerview.viewholder.DeliveryViewHolder;

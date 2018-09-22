@@ -1,4 +1,4 @@
-package com.irfancan.deliverpad.internetState;
+package com.irfancan.deliverpad.network.internetState;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -11,15 +11,8 @@ public class InternetStateChecker {
     //If not, the items will be restored from the cache(Hope there was a time the user was able to retrieve the data from the API otherwise the cache will be empty! :/ )
     public static boolean isNetwork(Context context) {
 
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
-
-    public static boolean isConnectedNetwork(Context context) {
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnectedOrConnecting();
-
     }
 }

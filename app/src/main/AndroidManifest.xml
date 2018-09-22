@@ -19,7 +19,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".views.activitys.MainActivity"
             android:screenOrientation="portrait">
 
             <intent-filter>
@@ -42,7 +42,7 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".DeliveredItemDetailsActivity"
+            android:name=".views.activitys.DeliveredItemDetailsActivity"
             android:screenOrientation="portrait"
             android:label="@string/title_activity_delivered_item_details">
 

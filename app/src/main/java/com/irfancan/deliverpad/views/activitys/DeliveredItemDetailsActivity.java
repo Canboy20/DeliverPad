@@ -1,4 +1,4 @@
-package com.irfancan.deliverpad;
+package com.irfancan.deliverpad.views.activitys;
 
 import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
@@ -13,6 +13,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.irfancan.deliverpad.R;
 import com.irfancan.deliverpad.constants.Constants;
 
 public class DeliveredItemDetailsActivity extends FragmentActivity implements OnMapReadyCallback {

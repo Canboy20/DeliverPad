@@ -1,4 +1,4 @@
-package com.irfancan.deliverpad.network;
+package com.irfancan.deliverpad.network.retrofit;
 
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
@@ -9,9 +9,6 @@ public class RetrofitService {
 
     //BASE URL FOR NOW
     private static final String BASE_URL="https://mock-api-mobile.dev.lalamove.com";
-
-    //https://mock-api-mobile.dev.lalamove.com/deliveries?offset=10&limit=20
-
 
     private static Retrofit retrofit = null;
 

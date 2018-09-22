@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="6"
-        tools:context=".DeliveredItemDetailsActivity" />
+        tools:context=".views.activitys.DeliveredItemDetailsActivity" />
 
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"

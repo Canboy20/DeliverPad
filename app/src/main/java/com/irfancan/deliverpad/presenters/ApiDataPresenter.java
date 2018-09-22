@@ -1,17 +1,14 @@
 package com.irfancan.deliverpad.presenters;
 
 import android.util.Log;
-import android.view.View;
 
-import com.irfancan.deliverpad.models.database.Item;
 import com.irfancan.deliverpad.models.model.DeliveredItem;
-import com.irfancan.deliverpad.network.DeliveredItemsFetcherService;
-import com.irfancan.deliverpad.network.RetrofitService;
+import com.irfancan.deliverpad.network.retrofit.DeliveredItemsFetcherService;
+import com.irfancan.deliverpad.network.retrofit.RetrofitService;
 import com.irfancan.deliverpad.views.ViewUpdater;
 
 import java.util.List;
 
-import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
@@ -39,6 +36,10 @@ public class ApiDataPresenter {
     private int currentPage = PAGE_START;
 
 
+    //Will holds reference of Retrofit client service
+    DeliveredItemsFetcherService apiService;
+
+
 
     public ApiDataPresenter(ViewUpdater viewUpdater){
 
@@ -50,7 +51,7 @@ public class ApiDataPresenter {
     public void getDeliveredItemsFromAPI(){
 
         //Service that will fetch Delivered items
-        DeliveredItemsFetcherService apiService = RetrofitService.getClient().create(DeliveredItemsFetcherService.class);
+        apiService = RetrofitService.getClient().create(DeliveredItemsFetcherService.class);
 
 
         mRequestsDisposables.add(apiService.getDeliveredItems(OFFSET+"",LIMIT+"")

@@ -1,4 +1,4 @@
-package com.irfancan.deliverpad.network;
+package com.irfancan.deliverpad.network.retrofit;
 
 import com.irfancan.deliverpad.models.model.DeliveredItem;
 
