@@ -12,11 +12,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.irfancan.deliverpad.R;
+import com.irfancan.deliverpad.constants.ToastType;
 import com.irfancan.deliverpad.network.internetState.InternetStateChecker;
 import com.irfancan.deliverpad.models.database.AppDatabase;
 import com.irfancan.deliverpad.models.model.DeliveredItem;
 import com.irfancan.deliverpad.presenters.ApiDataPresenter;
 import com.irfancan.deliverpad.presenters.CacheDataPresenter;
+import com.irfancan.deliverpad.views.RecyclerViewHelpers;
 import com.irfancan.deliverpad.views.ViewUpdater;
 import com.irfancan.deliverpad.views.recyclerview.adapter.DeliveriesAdapter;
 import com.irfancan.deliverpad.views.recyclerview.listeners.PagingScrollListener;
@@ -24,7 +26,7 @@ import com.irfancan.deliverpad.views.recyclerview.viewholder.LoadingViewHolder;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements ViewUpdater {
+public class MainActivity extends AppCompatActivity implements ViewUpdater,RecyclerViewHelpers {
 
 
     private RecyclerView mDeliveriesRecyclerView;
@@ -87,15 +89,12 @@ public class MainActivity extends AppCompatActivity implements ViewUpdater {
 
         //Try again text Ref. This will only be visible if at the very first attempt of retrieving data from API fails
         tryAgainTextView = findViewById(R.id.try_again_textView);
-        tryAgainTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        tryAgainTextView.setOnClickListener(v -> {
 
-                mTryAgainLayout.setVisibility(View.GONE);
-                mProgressBarLayout.setVisibility(View.VISIBLE);
-                mApiDataPresenter.getDeliveredItemsFromAPI();
+            mTryAgainLayout.setVisibility(View.GONE);
+            mProgressBarLayout.setVisibility(View.VISIBLE);
+            retryReceivingItemsFromAPI();
 
-            }
         });
 
         //Presenters
@@ -150,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements ViewUpdater {
 
         }else{
 
-            displayLoadingFromCacheToast();
+            displayToast(ToastType.LOADING_DATA_FROM_CACHE_TOAST);
             mCacheDataPresenter.getDeliveredItemsFromCache();
 
         }
@@ -234,11 +233,18 @@ public class MainActivity extends AppCompatActivity implements ViewUpdater {
 
 
         mProgressBarLayout.setVisibility(View.GONE);
-        mDeliveriesAdapter. addAll(receivedDeliveredItems);
-        LIMIT = receivedDeliveredItems.size();
-        isLastPage = true;
 
+        //If cache is empty(size is 0), then there is no possible data that can be displayed. Too Bad :(
+        if(receivedDeliveredItems.size()==0){
+            displayToast(ToastType.CACHE_IS_EMPTY_TOAST);
 
+        }else{
+
+            mDeliveriesAdapter. addAll(receivedDeliveredItems);
+            LIMIT = receivedDeliveredItems.size();
+            isLastPage = true;
+
+        }
 
     }
 
@@ -267,31 +273,41 @@ public class MainActivity extends AppCompatActivity implements ViewUpdater {
     }
 
 
+    public void retryReceivingItemsFromAPI() {
+        mApiDataPresenter.getDeliveredItemsFromAPI();
+    }
 
     @Override
-    public void displayCacheIsEmpty() {
-
-        Context context = getApplicationContext();
-        CharSequence text = "Cache is Empty. Sorry :( ";
-        int duration = Toast.LENGTH_LONG;
-
-        Toast toast = Toast.makeText(context, text, duration);
-        toast.show();
-
-
+    public void retryReceivingNextItemsFromAPI() {
+        mApiDataPresenter.getNextDeliveredItemsFromAPI();
     }
 
 
-    private void displayLoadingFromCacheToast(){
+    @Override
+    public Context getContext() {
+        return this;
+    }
 
-        Context context = getApplicationContext();
-        CharSequence text = "No internet connection available. Loading data from cache!";
+
+    private void displayToast(ToastType toastType){
+
         int duration = Toast.LENGTH_LONG;
 
-        Toast toast = Toast.makeText(context, text, duration);
-        toast.show();
+        if(toastType == ToastType.LOADING_DATA_FROM_CACHE_TOAST){
+
+            CharSequence text = "No internet connection available. Loading data from cache!";
+            Toast toast = Toast.makeText(this, text, duration);
+            toast.show();
+
+        }else if(toastType == ToastType.CACHE_IS_EMPTY_TOAST){
+
+            CharSequence text = "Cache is Empty. Sorry :( ";
+            Toast toast = Toast.makeText(this, text, duration);
+            toast.show();
+        }
 
     }
+
 
 
 }

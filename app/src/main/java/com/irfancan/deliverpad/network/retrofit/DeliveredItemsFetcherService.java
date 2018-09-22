@@ -12,6 +12,6 @@ public interface DeliveredItemsFetcherService {
 
 
     @GET("deliveries?")
-    Single<List<DeliveredItem>> getDeliveredItems( @Query("offset") String offset , @Query("limit") String limit );
+    Single<List<DeliveredItem>> getDeliveredItems( @Query("offset") Integer offset , @Query("limit") Integer limit );
 
 }

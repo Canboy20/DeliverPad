@@ -16,6 +16,4 @@ public interface ViewUpdater {
 
     void displayErrorLoadingDataOnViewHolder();
 
-    void displayCacheIsEmpty();
-
 }

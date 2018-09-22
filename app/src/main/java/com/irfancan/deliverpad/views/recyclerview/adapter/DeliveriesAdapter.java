@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.irfancan.deliverpad.constants.Constants;
+import com.irfancan.deliverpad.views.RecyclerViewHelpers;
 import com.irfancan.deliverpad.views.activitys.DeliveredItemDetailsActivity;
 import com.irfancan.deliverpad.R;
 import com.irfancan.deliverpad.models.model.DeliveredItem;
@@ -28,14 +29,18 @@ public class DeliveriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private List<DeliveredItem> mDeliveredItems;
 
-    private Context context;
     private boolean isLoadingAdded = false;
 
+    //This constains methods which this RecyclerView will use
+    private RecyclerViewHelpers mRecyclerViewHelpers;
 
 
-    public DeliveriesAdapter(Context context) {
-        this.context = context;
+
+    public DeliveriesAdapter(RecyclerViewHelpers recyclerViewHelpers) {
+
+        mRecyclerViewHelpers = recyclerViewHelpers;
         mDeliveredItems = new ArrayList<>();
+
     }
 
 
@@ -52,7 +57,7 @@ public class DeliveriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
             case LOADING:
                 LinearLayout loadingItemRow= (LinearLayout) LayoutInflater.from(parent.getContext()).inflate(R.layout.loading_item, parent, false);
-                viewHolder = new LoadingViewHolder(loadingItemRow);
+                viewHolder = new LoadingViewHolder(loadingItemRow,mRecyclerViewHelpers);
                 break;
         }
         return viewHolder;
@@ -72,29 +77,26 @@ public class DeliveriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 deliveredItemHolder.updateDescriptionTextView(mDeliveredItems.get(position).getDescription());
                 deliveredItemHolder.updateLocationNameTextView(mDeliveredItems.get(position).getLocation() != null ? mDeliveredItems.get(position).getLocation().getAddress() : "");
                 deliveredItemHolder.updateImageView(mDeliveredItems.get(position).getImageUrl());
-                deliveredItemHolder.mLinearLayout.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                deliveredItemHolder.mLinearLayout.setOnClickListener(v -> {
 
-                        Intent deliveredItemIntent=new Intent(context, DeliveredItemDetailsActivity.class);
-                        Bundle deliveredItemBundle = new Bundle();
+                    Intent deliveredItemIntent=new Intent(mRecyclerViewHelpers.getContext(), DeliveredItemDetailsActivity.class);
+                    Bundle deliveredItemBundle = new Bundle();
 
-                        deliveredItemBundle.putString(Constants.ITEM_NAME, mDeliveredItems.get(position).getDescription());
-                        deliveredItemBundle.putString(Constants.ITEM_IMG_URL, mDeliveredItems.get(position).getImageUrl());
+                    deliveredItemBundle.putString(Constants.ITEM_NAME, mDeliveredItems.get(position).getDescription());
+                    deliveredItemBundle.putString(Constants.ITEM_IMG_URL, mDeliveredItems.get(position).getImageUrl());
 
-                        if(mDeliveredItems.get(position).getLocation() != null){
+                    if(mDeliveredItems.get(position).getLocation() != null){
 
-                            deliveredItemBundle.putString(Constants.ITEM_ADDRESS, mDeliveredItems.get(position).getLocation().getAddress());
-                            deliveredItemBundle.putDouble(Constants.ITEM_LONG, mDeliveredItems.get(position).getLocation().getLng());
-                            deliveredItemBundle.putDouble(Constants.ITEM_LATI, mDeliveredItems.get(position).getLocation().getLat());
-
-                        }
-
-
-                        deliveredItemIntent.putExtras(deliveredItemBundle);
-                        context.startActivity(deliveredItemIntent);
+                        deliveredItemBundle.putString(Constants.ITEM_ADDRESS, mDeliveredItems.get(position).getLocation().getAddress());
+                        deliveredItemBundle.putDouble(Constants.ITEM_LONG, mDeliveredItems.get(position).getLocation().getLng());
+                        deliveredItemBundle.putDouble(Constants.ITEM_LATI, mDeliveredItems.get(position).getLocation().getLat());
 
                     }
+
+
+                    deliveredItemIntent.putExtras(deliveredItemBundle);
+                    mRecyclerViewHelpers.getContext().startActivity(deliveredItemIntent);
+
                 });
 
                 break;

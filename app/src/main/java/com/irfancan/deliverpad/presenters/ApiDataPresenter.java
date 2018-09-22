@@ -54,7 +54,7 @@ public class ApiDataPresenter {
         apiService = RetrofitService.getClient().create(DeliveredItemsFetcherService.class);
 
 
-        mRequestsDisposables.add(apiService.getDeliveredItems(OFFSET+"",LIMIT+"")
+        mRequestsDisposables.add(apiService.getDeliveredItems(OFFSET,LIMIT)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new DisposableSingleObserver<List<DeliveredItem>>() {
@@ -93,20 +93,21 @@ public class ApiDataPresenter {
         //Service that will fetch Delivered items
         DeliveredItemsFetcherService apiService = RetrofitService.getClient().create(DeliveredItemsFetcherService.class);
 
-        OFFSET = OFFSET + LIMIT;
         //LIMIT = LIMIT + 20;
 
-        mRequestsDisposables.add(apiService.getDeliveredItems(OFFSET+"",LIMIT+"")
+        mRequestsDisposables.add(apiService.getDeliveredItems(OFFSET+LIMIT , LIMIT)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new DisposableSingleObserver<List<DeliveredItem>>() {
                     @Override
                     public void onSuccess(List<DeliveredItem> rootResponse) {
 
-
                         Log.d("REQUEST SUCCESS","SUCCESS");
-                        mViewUpdater.displayNextDeliveredItemsFromApi(rootResponse);
 
+                        //Retrieval of new items was successful, so update offset
+                        OFFSET = OFFSET + LIMIT;
+
+                        mViewUpdater.displayNextDeliveredItemsFromApi(rootResponse);
 
                     }
 

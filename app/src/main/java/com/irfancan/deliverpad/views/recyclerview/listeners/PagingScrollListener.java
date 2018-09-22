@@ -2,6 +2,7 @@ package com.irfancan.deliverpad.views.recyclerview.listeners;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
 public abstract class PagingScrollListener extends RecyclerView.OnScrollListener {
 
