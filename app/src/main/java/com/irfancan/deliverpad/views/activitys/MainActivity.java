@@ -272,11 +272,14 @@ public class MainActivity extends AppCompatActivity implements ViewUpdater,Recyc
 
     }
 
-
+    /**This will be called from the Main Activity Layout(When user clicks at Try Again text)**/
     public void retryReceivingItemsFromAPI() {
+
         mApiDataPresenter.getDeliveredItemsFromAPI();
     }
 
+    
+    /**This will be called from the Loading ViewHolder(When user clicks at Try Again text)**/
     @Override
     public void retryReceivingNextItemsFromAPI() {
         mApiDataPresenter.getNextDeliveredItemsFromAPI();
