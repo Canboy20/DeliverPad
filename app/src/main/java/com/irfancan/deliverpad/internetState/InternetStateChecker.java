@@ -1,4 +1,4 @@
-package com.irfancan.deliverpad.InternetState;
+package com.irfancan.deliverpad.internetState;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

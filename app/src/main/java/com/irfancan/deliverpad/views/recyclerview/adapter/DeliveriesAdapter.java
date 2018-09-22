@@ -1,21 +1,20 @@
-package com.irfancan.deliverpad.recyclerview.adapter;
+package com.irfancan.deliverpad.views.recyclerview.adapter;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import com.irfancan.deliverpad.Constants.Constants;
+import com.irfancan.deliverpad.constants.Constants;
 import com.irfancan.deliverpad.DeliveredItemDetailsActivity;
 import com.irfancan.deliverpad.R;
-import com.irfancan.deliverpad.model.DeliveredItem;
-import com.irfancan.deliverpad.recyclerview.viewholder.DeliveryViewHolder;
-import com.irfancan.deliverpad.recyclerview.viewholder.LoadingViewHolder;
+import com.irfancan.deliverpad.models.model.DeliveredItem;
+import com.irfancan.deliverpad.views.recyclerview.viewholder.DeliveryViewHolder;
+import com.irfancan.deliverpad.views.recyclerview.viewholder.LoadingViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;

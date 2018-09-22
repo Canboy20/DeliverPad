@@ -1,6 +1,6 @@
-package com.irfancan.deliverpad.network.service;
+package com.irfancan.deliverpad.network;
 
-import com.irfancan.deliverpad.model.DeliveredItem;
+import com.irfancan.deliverpad.models.model.DeliveredItem;
 
 import java.util.List;
 

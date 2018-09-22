@@ -1,4 +1,4 @@
-package com.irfancan.deliverpad.Constants;
+package com.irfancan.deliverpad.constants;
 
 public class Constants {
 

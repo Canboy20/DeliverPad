@@ -1,4 +1,4 @@
-package com.irfancan.deliverpad.Room;
+package com.irfancan.deliverpad.models.database;
 
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.RoomDatabase;

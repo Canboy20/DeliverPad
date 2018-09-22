@@ -1,4 +1,4 @@
-package com.irfancan.deliverpad.network.service;
+package com.irfancan.deliverpad.network;
 
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;

@@ -1,4 +1,4 @@
-package com.irfancan.deliverpad.recyclerview.viewholder;
+package com.irfancan.deliverpad.views.recyclerview.viewholder;
 
 import android.support.v7.widget.RecyclerView;
 import android.widget.ImageView;

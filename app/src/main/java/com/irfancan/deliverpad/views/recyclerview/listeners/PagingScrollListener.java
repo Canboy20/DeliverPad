@@ -1,4 +1,4 @@
-package com.irfancan.deliverpad.recyclerview.listeners;
+package com.irfancan.deliverpad.views.recyclerview.listeners;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;

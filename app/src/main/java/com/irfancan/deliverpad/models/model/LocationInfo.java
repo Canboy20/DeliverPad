@@ -1,4 +1,4 @@
-package com.irfancan.deliverpad.model;
+package com.irfancan.deliverpad.models.model;
 
 import com.google.gson.annotations.SerializedName;
 
