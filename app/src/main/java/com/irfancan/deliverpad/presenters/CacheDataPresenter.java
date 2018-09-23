@@ -147,4 +147,14 @@ public class CacheDataPresenter {
 
 
 
+    //This will be used to dispose RxJava calls when app is in the background or has been destroyed
+    public void disposeCalls(){
+        if (mRequestsDisposables != null && !mRequestsDisposables.isDisposed()) {
+            mRequestsDisposables.dispose();
+
+        }
+    }
+
+
+
 }

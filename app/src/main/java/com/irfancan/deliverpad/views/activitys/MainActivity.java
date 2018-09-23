@@ -311,7 +311,21 @@ public class MainActivity extends AppCompatActivity implements ViewUpdater,Recyc
 
     }
 
+//OnResume is responsible in restoring any RxJava calls that was disposed.
+    @Override
+    protected void onResume() {
+        super.onResume();
 
+        mApiDataPresenter.resumeDisposedCall();
 
+    }
+
+//OnStop is responsible in disposing any ongoing RxJava calls.
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        mApiDataPresenter.disposeCalls();
+    }
 }
 

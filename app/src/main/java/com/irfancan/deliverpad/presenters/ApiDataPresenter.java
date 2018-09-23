@@ -40,6 +40,13 @@ public class ApiDataPresenter {
     DeliveredItemsFetcherService apiService;
 
 
+    //Dispose boolean
+    private boolean onFirstAPIcall=false;
+    private boolean onNextAPIcall=false;
+    private boolean disposeOccured=false;
+
+
+
 
     public ApiDataPresenter(ViewUpdater viewUpdater){
 
@@ -53,6 +60,8 @@ public class ApiDataPresenter {
         //Service that will fetch Delivered items
         apiService = RetrofitService.getClient().create(DeliveredItemsFetcherService.class);
 
+        //This will be used to resume from dispose
+        onFirstAPIcall = true;
 
         mRequestsDisposables.add(apiService.getDeliveredItems(OFFSET,LIMIT)
                 .subscribeOn(Schedulers.io())
@@ -66,6 +75,9 @@ public class ApiDataPresenter {
                         //Will update UI with new data
                         mViewUpdater.displayFirstDeliveredItemsFromApi(deliveredItemsResponse);
 
+                        onFirstAPIcall = false;
+
+
                     }
 
 
@@ -76,6 +88,8 @@ public class ApiDataPresenter {
 
 
                         mViewUpdater.displayErrorLoadingData();
+
+                        onFirstAPIcall = false;
 
 
                     }
@@ -95,6 +109,10 @@ public class ApiDataPresenter {
 
         //LIMIT = LIMIT + 20;
 
+        //This will be used to resume from dispose
+        onNextAPIcall = true;
+
+
         mRequestsDisposables.add(apiService.getDeliveredItems(OFFSET+LIMIT , LIMIT)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -109,6 +127,10 @@ public class ApiDataPresenter {
 
                         mViewUpdater.displayNextDeliveredItemsFromApi(rootResponse);
 
+
+                        onNextAPIcall = false;
+
+
                     }
 
                     @Override
@@ -119,12 +141,47 @@ public class ApiDataPresenter {
 
                         mViewUpdater.displayErrorLoadingDataOnViewHolder();
 
+                        onNextAPIcall = false;
+
+
 
                     }
                 }));
 
+    }
 
 
+    //This will be used to dispose RxJava calls when app is in the background or has been destroyed
+    public void disposeCalls(){
+
+        if (mRequestsDisposables != null && !mRequestsDisposables.isDisposed()) {
+
+            mRequestsDisposables.clear();
+            disposeOccured=true;
+        }
+    }
+
+
+
+    public void resumeDisposedCall(){
+
+        if (disposeOccured) {
+
+            disposeOccured=false;
+
+
+            if(onFirstAPIcall){
+                onFirstAPIcall=false;
+                getDeliveredItemsFromAPI();
+
+            }else if(onNextAPIcall){
+                onNextAPIcall=false;
+                getNextDeliveredItemsFromAPI();
+
+            }
+
+
+        }
     }
 
 
