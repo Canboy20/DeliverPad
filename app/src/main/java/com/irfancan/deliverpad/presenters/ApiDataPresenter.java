@@ -165,6 +165,7 @@ public class ApiDataPresenter {
 
     public void resumeDisposedCall(){
 
+        //If any RxJava call was disposed due to activity going in background state( onStop() ), then this will resume the call which was disposed
         if (disposeOccured) {
 
             disposeOccured=false;
